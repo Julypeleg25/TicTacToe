@@ -1,17 +1,19 @@
 import usePlayerStore from "../stores/usePlayerStore";
-import { PlayerToImageSrc } from "../utils/TicTacToeTypes";
+import { Player, PlayerToImageSrc } from "../utils/TicTacToeTypes";
 
 interface SquareProps {
-  value: number;
+  value: Player | null;
+  squareKey: number;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 const Square = (props: SquareProps) => {
-  const { player } = usePlayerStore();
 
   return (
     <div
       style={{
+        pointerEvents: props.disabled ? "none" : "auto",
         width: "120px",
         height: "120px",
         border: "1px solid black",
@@ -26,8 +28,7 @@ const Square = (props: SquareProps) => {
       <img
         width={"80px"}
         height={"80px"}
-        src={PlayerToImageSrc[player]}
-        alt={"O/X"}
+        src={props.value ? PlayerToImageSrc[props.value] : ""}
       />
     </div>
   );
