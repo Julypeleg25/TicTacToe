@@ -1,3 +1,5 @@
+import circle from "@/assets/circleMark.png";
+
 interface SquareProps {
   value: number;
   onClick: () => void;
@@ -18,7 +20,12 @@ const Square = (props: SquareProps) => {
       }}
       onClick={props.onClick}
     >
-      {props.value}
+      <img
+        width={"80px"}
+        height={"80px"}
+        src={circle}
+        alt={"O / X"}
+      />
     </div>
   );
 };
