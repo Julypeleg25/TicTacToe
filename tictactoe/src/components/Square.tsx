@@ -1,14 +1,17 @@
-import circle from "@/assets/circleMark.png";
+import { Player, PlayerToImageSrc } from "../utils/TicTacToeTypes";
 
 interface SquareProps {
-  value: number;
+  value: Player | null;
+  squareKey: number;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 const Square = (props: SquareProps) => {
   return (
     <div
       style={{
+        pointerEvents: props.disabled ? "none" : "auto",
         width: "120px",
         height: "120px",
         border: "1px solid black",
@@ -20,12 +23,13 @@ const Square = (props: SquareProps) => {
       }}
       onClick={props.onClick}
     >
-      <img
-        width={"80px"}
-        height={"80px"}
-        src={circle}
-        alt={"O / X"}
-      />
+      {props.value && (
+        <img
+          width={"80px"}
+          height={"80px"}
+          src={PlayerToImageSrc[props.value]}
+        />
+      )}
     </div>
   );
 };
