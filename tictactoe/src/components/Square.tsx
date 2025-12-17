@@ -1,4 +1,5 @@
-import circle from "@/assets/circleMark.png";
+import usePlayerStore from "../stores/usePlayerStore";
+import { PlayerToImageSrc } from "../utils/TicTacToeTypes";
 
 interface SquareProps {
   value: number;
@@ -6,6 +7,8 @@ interface SquareProps {
 }
 
 const Square = (props: SquareProps) => {
+  const { player } = usePlayerStore();
+
   return (
     <div
       style={{
@@ -23,8 +26,8 @@ const Square = (props: SquareProps) => {
       <img
         width={"80px"}
         height={"80px"}
-        src={circle}
-        alt={"O / X"}
+        src={PlayerToImageSrc[player]}
+        alt={"O/X"}
       />
     </div>
   );
