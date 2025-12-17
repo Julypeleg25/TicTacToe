@@ -2,10 +2,7 @@ import { useCallback, useState } from "react";
 import usePlayerStore from "../stores/usePlayerStore";
 import { Player, players } from "../utils/TicTacToeTypes";
 import Square from "./Square";
-
-const squareValues: number[] = Array(9)
-  .fill(0)
-  .map((_, i) => i + 1);
+import Modal from "./Modal";
 
 const winningCombinations = [
   [1, 2, 3],
@@ -34,46 +31,79 @@ const Board = () => {
   const { player, setPlayer, resetPlayer } = usePlayerStore();
   const [board, setBoard] =
     useState<Record<number, null | Player>>(initBoardState);
+  const [winner, setWinner] = useState<Player | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
-  const isPlayerWon = useCallback(() => {
-    return winningCombinations.some((combination) =>
-      combination.every((index) => board[index] === player)
-    );
-  }, [board, player, setBoard]);
+  const checkWin = useCallback(
+    (boardState: Record<number, null | Player>, player: Player) => {
+      return winningCombinations.some((combination) =>
+        combination.every((index) => boardState[index] === player)
+      );
+    },
+    []
+  );
+
+  const isBoardFull = useCallback(
+    (boardState: Record<number, null | Player>) => {
+      return Object.values(boardState).every((v) => v !== null);
+    },
+    []
+  );
 
   const onSquareClick = useCallback(
     (value: number) => {
-      if (board[value] !== null) return;
-      setBoard((prev) => ({ ...prev, [value]: player }));
-      if (isPlayerWon()) {
-        alert(`Player ${player} won! PLAY AGAIN?`);
-        resetPlayer();
-        setBoard(initBoardState);
+      if (board[value] !== null || winner) return;
 
-        return;
-      }
-      setPlayer(player === players.X ? players.O : players.X);
+      setBoard((prev) => {
+        const nextBoard = { ...prev, [value]: player };
+
+        if (checkWin(nextBoard, player)) {
+          setWinner(player);
+          setShowModal(true);
+        } else if (isBoardFull(nextBoard)) {
+          setShowModal(true);
+        } else {
+          setPlayer(player === players.X ? players.O : players.X);
+        }
+
+        return nextBoard;
+      });
     },
-    [board, isPlayerWon, player, setPlayer]
+    [board, player, winner, setPlayer, checkWin, isBoardFull]
   );
 
+  const handlePlayAgain = () => {
+    resetPlayer();
+    setBoard({ ...initBoardState });
+    setWinner(null);
+    setShowModal(false);
+  };
+
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(3, 120px)",
-        gridTemplateRows: "repeat(3, 120px)",
-      }}
-    >
-      {Object.entries(board).map(([key, value]) => (
-        <Square
-          key={key}
-          squareKey={Number(key)}
-          disabled={value !== null}
-          value={value}
-          onClick={() => onSquareClick(Number(key))}
-        />
-      ))}
+    <div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 120px)",
+          gridTemplateRows: "repeat(3, 120px)",
+          gap: "5px",
+        }}
+      >
+        {Object.entries(board).map(([key, value]) => (
+          <Square
+            key={key}
+            squareKey={Number(key)}
+            disabled={value !== null}
+            value={value as Player}
+            onClick={() => {
+              onSquareClick(Number(key));
+            }}
+          />
+        ))}
+      </div>
+      <div style={{ marginTop: "20px", fontSize: "24px" }}>{player} Play</div>
+
+      {showModal && <Modal winner={winner} handlePlayAgain={handlePlayAgain} />}
     </div>
   );
 };
