@@ -1,4 +1,3 @@
-import usePlayerStore from "../stores/usePlayerStore";
 import { Player, PlayerToImageSrc } from "../utils/TicTacToeTypes";
 
 interface SquareProps {
@@ -9,7 +8,6 @@ interface SquareProps {
 }
 
 const Square = (props: SquareProps) => {
-
   return (
     <div
       style={{
@@ -25,11 +23,13 @@ const Square = (props: SquareProps) => {
       }}
       onClick={props.onClick}
     >
-      <img
-        width={"80px"}
-        height={"80px"}
-        src={props.value ? PlayerToImageSrc[props.value] : ""}
-      />
+      {props.value && (
+        <img
+          width={"80px"}
+          height={"80px"}
+          src={PlayerToImageSrc[props.value]}
+        />
+      )}
     </div>
   );
 };

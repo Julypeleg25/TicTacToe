@@ -7,7 +7,7 @@ interface PlayerState {
   resetPlayer: () => void;
 }
 
-const DEFAULT_PLAYER = playerArray[1] as Player;
+const DEFAULT_PLAYER = playerArray[0] as Player;
 
 const usePlayerStore = create<PlayerState>((set) => ({
   player: DEFAULT_PLAYER,
