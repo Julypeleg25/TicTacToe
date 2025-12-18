@@ -1,53 +1,44 @@
+import * as React from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
+
 interface ModalProps {
   winner: string | null;
   handlePlayAgain: () => void;
 }
 
-const Modal = (props: ModalProps) => {
+const WinModal = (props: ModalProps) => {
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 1000,
+    <Dialog
+      open={true}
+      onClose={props.handlePlayAgain}
+      aria-labelledby="winner-dialog-title"
+      PaperProps={{
+        sx: {
+          minWidth: 280,
+          borderRadius: 2,
+          p: 2,
+          textAlign: "center",
+        },
       }}
     >
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "40px",
-          borderRadius: "8px",
-          textAlign: "center",
-          minWidth: "300px",
-        }}
-      >
-        <h2 style={{ marginBottom: "20px" }}>
-          {props.winner ? `Player ${props.winner} won!` : "It's a draw!"}
-        </h2>
-        <button
+      <DialogTitle id="winner-dialog-title">
+        {props.winner ? `Player ${props.winner} won!` : "It's a draw!"}
+      </DialogTitle>
+      <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+        <Button
+          variant="contained"
+          color="success"
           onClick={props.handlePlayAgain}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            cursor: "pointer",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-          }}
+          sx={{ minWidth: 120 }}
         >
           Play Again
-        </button>
-      </div>
-    </div>
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
-export default Modal;
+export default WinModal;
