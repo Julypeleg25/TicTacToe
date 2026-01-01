@@ -1,4 +1,5 @@
-import { Player, PlayerToImageSrc } from "../utils/TicTacToeTypes";
+import {  playerToImageSrcMap } from "../utils/consts";
+import { Player } from "../utils/types";
 
 interface SquareProps {
   value: Player | null;
@@ -27,7 +28,7 @@ const Square = (props: SquareProps) => {
         <img
           width={"80px"}
           height={"80px"}
-          src={PlayerToImageSrc[props.value]}
+          src={playerToImageSrcMap[props.value]}
         />
       )}
     </div>

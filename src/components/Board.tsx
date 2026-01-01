@@ -1,8 +1,9 @@
 import { useCallback, useState } from "react";
 import usePlayerStore from "../stores/usePlayerStore";
-import { Player, players } from "../utils/TicTacToeTypes";
+import { Player } from "../utils/types";
 import Square from "./Square";
 import Modal from "./Modal";
+import { DEFAULT_PLAYER, players } from "../utils/consts";
 
 const winningCombinations = [
   [1, 2, 3],
@@ -28,7 +29,7 @@ const initBoardState: Record<number, null | Player> = {
 };
 
 const Board = () => {
-  const { player, setPlayer, resetPlayer } = usePlayerStore();
+  const { player, setPlayer } = usePlayerStore();
   const [board, setBoard] =
     useState<Record<number, null | Player>>(initBoardState);
   const [winner, setWinner] = useState<Player | null>(null);
@@ -73,7 +74,7 @@ const Board = () => {
   );
 
   const handlePlayAgain = () => {
-    resetPlayer();
+    setPlayer(DEFAULT_PLAYER)
     setBoard({ ...initBoardState });
     setWinner(null);
     setShowModal(false);
