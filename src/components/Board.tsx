@@ -2,8 +2,8 @@ import { useCallback, useState } from "react";
 import usePlayerStore from "../stores/usePlayerStore";
 import { Player } from "../utils/types";
 import Square from "./Square";
-import Modal from "./Modal";
 import { DEFAULT_PLAYER, players } from "../utils/consts";
+import { Box, Button } from "@mui/material";
 
 const winningCombinations = [
   [1, 2, 3],
@@ -33,22 +33,32 @@ const Board = () => {
   const [board, setBoard] =
     useState<Record<number, null | Player>>(initBoardState);
   const [winner, setWinner] = useState<Player | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const [isGameOver, setIsGameOver] = useState<boolean>();
+
+  const statusMessage = () => {
+    if (!isGameOver) {
+      return `Next turn: ${player}`;
+    } else if (isGameOver && winner) {
+      return `Winner: ${player}`;
+    }
+
+    return "Draw!";
+  };
 
   const checkWin = useCallback(
     (boardState: Record<number, null | Player>, player: Player) => {
       return winningCombinations.some((combination) =>
-        combination.every((index) => boardState[index] === player)
+        combination.every((index) => boardState[index] === player),
       );
     },
-    []
+    [],
   );
 
   const isBoardFull = useCallback(
     (boardState: Record<number, null | Player>) => {
-      return Object.values(boardState).every((v) => v !== null);
+      return Object.values(boardState).every((value) => value !== null);
     },
-    []
+    [],
   );
 
   const onSquareClick = useCallback(
@@ -60,9 +70,9 @@ const Board = () => {
 
         if (checkWin(nextBoard, player)) {
           setWinner(player);
-          setShowModal(true);
+          setIsGameOver(true);
         } else if (isBoardFull(nextBoard)) {
-          setShowModal(true);
+          setIsGameOver(true);
         } else {
           setPlayer(player === players.X ? players.O : players.X);
         }
@@ -70,14 +80,14 @@ const Board = () => {
         return nextBoard;
       });
     },
-    [board, player, winner, setPlayer, checkWin, isBoardFull]
+    [board, player, winner, setPlayer, checkWin, isBoardFull],
   );
 
   const handlePlayAgain = () => {
-    setPlayer(DEFAULT_PLAYER)
+    setPlayer(DEFAULT_PLAYER);
     setBoard({ ...initBoardState });
     setWinner(null);
-    setShowModal(false);
+    setIsGameOver(false);
   };
 
   return (
@@ -94,7 +104,7 @@ const Board = () => {
           <Square
             key={key}
             squareKey={Number(key)}
-            disabled={value !== null}
+            disabled={value !== null||isGameOver}
             value={value as Player}
             onClick={() => {
               onSquareClick(Number(key));
@@ -102,9 +112,37 @@ const Board = () => {
           />
         ))}
       </div>
-      <div style={{ marginTop: "20px", fontSize: "24px" }}>{player} Play</div>
+      <Box
+        sx={[
+          {
+            marginTop: "20px",
+            fontSize: "24px",
+            display: "flex",
+            justifySelf: "center",
+            justifyContent: "center",
+          },
+          winner && {
+            borderColor: "primary.main",
+            boxShadow: 6,
+            transform: "scale(1.02)",
+            borderRadius: 2,
+            width: "150px",
+          },
+        ]}
+      >
+        {statusMessage()}
+      </Box>
 
-      {showModal && <Modal winner={winner} handlePlayAgain={handlePlayAgain} />}
+      {isGameOver && (
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handlePlayAgain}
+          sx={{ minWidth: 120, mt: 5 }}
+        >
+          Play Again
+        </Button>
+      )}
     </div>
   );
 };
